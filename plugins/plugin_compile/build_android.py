@@ -202,7 +202,14 @@ class AndroidBuilder(object):
 
         version_file_path = os.path.join(ndk_root, "RELEASE.TXT")
         try:
-            versionFile = open(version_file_path)
+            if os.path.exists(version_file_path):
+                versionFile = open(version_file_path)
+            else:
+                version_file_path = os.path.join(ndk_root, "source.properties")
+                if os.path.exists(version_file_path):
+                    version_major = "4.9"
+                    return version_major
+
             lines = versionFile.readlines()
             versionFile.close()
 
@@ -270,14 +277,11 @@ class AndroidBuilder(object):
 
         module_paths = []
         for cfg_path in self.ndk_module_paths:
-            if cfg_path.find("${COCOS_X_ROOT}") >= 0:
-                cocos_root = cocos.check_environment_variable("COCOS_X_ROOT")
-                module_paths.append(cfg_path.replace("${COCOS_X_ROOT}", cocos_root))
-            elif cfg_path.find("${COCOS_FRAMEWORKS}") >= 0:
-                cocos_frameworks = cocos.check_environment_variable("COCOS_FRAMEWORKS")
-                module_paths.append(cfg_path.replace("${COCOS_FRAMEWORKS}", cocos_frameworks))
-            else:
-                module_paths.append(os.path.join(self.app_android_root, cfg_path))
+            the_path = cocos.replace_env_variable(cfg_path)
+            if not os.path.isabs(the_path):
+                the_path = os.path.normpath(os.path.join(self.app_android_root, the_path))
+
+            module_paths.append(the_path)
 
         # delete template static and dynamic files
         obj_local_dir = os.path.join(ndk_work_dir, "obj", "local")
@@ -543,6 +547,20 @@ class AndroidBuilder(object):
 
         # copy resources
         self._copy_resources(custom_step_args, assets_dir)
+
+        ##cocospackage  
+        try:
+            if os.path.exists(os.path.join(self._project.get_project_dir(), '.cocos-package.json')):
+                path = ''
+                if getattr(sys, 'frozen', None):
+                    path = os.path.realpath(os.path.dirname(sys.executable))
+                else:
+                    path = os.path.realpath(os.path.dirname(__file__))
+                path = os.path.join(path, '../plugin_package/cocospackage')
+                cmd = '%s encrypt -p %s --mode %s --runincocos --runinbuild --noupdate --env %s' % (path, self._project.get_project_dir(), build_mode, compile_obj.__class__.get_console_path())
+                self._run_cmd(cmd)
+        except:
+            pass
 
         # check the project config & compile the script files
         if self._project._is_lua_project():

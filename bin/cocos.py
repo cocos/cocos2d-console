@@ -25,12 +25,13 @@ import string
 import locale
 import gettext
 import json
+from utils import ExtendEnv
 
 
 # FIXME: MultiLanguage should be deprecated in favor of gettext
 from MultiLanguage import MultiLanguage
 
-COCOS2D_CONSOLE_VERSION = '2.1'
+COCOS2D_CONSOLE_VERSION = '2.2'
 
 
 class Cocos2dIniParser:
@@ -178,6 +179,7 @@ class CMDRunner(object):
         else:
             log_path = CCPlugin._log_path()
             command += ' >"%s" 2>&1' % log_path
+        sys.stdout.flush()
         ret = subprocess.call(command, shell=True, cwd=cwd)
         if ret != 0:
             message = MultiLanguage.get_string('COCOS_ERROR_RUNNING_CMD_RET_FMT', str(ret))
@@ -628,7 +630,9 @@ def check_environment_variable(var):
     ''' Checking the environment variable, if found then return it's value, else raise error
     '''
     try:
-        value = os.environ[var]
+        value = ExtendEnv.get_extend_env_value(var)
+        if value is None:
+            value = os.environ[var]
     except Exception:
         raise CCPluginError(MultiLanguage.get_string('COCOS_ERROR_ENV_NOT_DEFINED_FMT', var),
                             CCPluginError.ERROR_ENV_VAR_NOT_FOUND)
@@ -672,13 +676,27 @@ def copy_files_in_dir(src, dst):
                 os.makedirs(add_path_prefix(new_dst))
             copy_files_in_dir(path, new_dst)
 
+def replace_env_variable(the_str):
+    import re
+    env_pattern = '\${(.*)}'
+    match = re.match(env_pattern, the_str)
+    ret = the_str
+    if match:
+        env_key = match.group(1)
+        env_value = check_environment_variable(env_key)
+        ret = ret.replace('${%s}' % env_key, env_value)
+
+    return ret
 
 def copy_files_with_config(config, src_root, dst_root):
-    src_dir = config["from"]
-    dst_dir = config["to"]
+    src_dir = replace_env_variable(config["from"])
+    dst_dir = replace_env_variable(config["to"])
 
-    src_dir = os.path.join(src_root, src_dir)
-    dst_dir = os.path.join(dst_root, dst_dir)
+    if not os.path.isabs(src_dir):
+        src_dir = os.path.normpath(os.path.join(src_root, src_dir))
+
+    if not os.path.isabs(dst_dir):
+        dst_dir = os.path.normpath(os.path.join(dst_root, dst_dir))
 
     include_rules = None
     if "include" in config:
@@ -870,8 +888,14 @@ def _check_python_version():
     return ret
 
 # gettext
-locale.setlocale(locale.LC_ALL, '')  # use user's preferred locale
-language, encoding = locale.getlocale()
+language = None
+encoding = None
+try:
+    locale.setlocale(locale.LC_ALL, '')  # use user's preferred locale
+    language, encoding = locale.getlocale()
+except:
+    pass
+
 if language is not None:
     filename = "language_%s.mo" % language[0:2]
     try:
@@ -898,6 +922,21 @@ if __name__ == "__main__":
         MultiLanguage.set_language(sys.argv[idx+1])
 
         # remove the argument '--ol' & the value
+        sys.argv.pop(idx)
+        sys.argv.pop(idx)
+
+    # Parse the extend environment variables
+    env_arg = '--env'
+    if env_arg in sys.argv:
+        idx = sys.argv.index(env_arg)
+        if idx == (len(sys.argv) - 1):
+            Logging.error(MultiLanguage.get_string('COCOS_ERROR_ENV_NO_VALUE'))
+            sys.exit(CCPluginError.ERROR_WRONG_ARGS)
+
+        # add extend environment variables
+        ExtendEnv.parse_extend_env(sys.argv[idx+1])
+
+        # remove the argument '--env' & the value
         sys.argv.pop(idx)
         sys.argv.pop(idx)
 

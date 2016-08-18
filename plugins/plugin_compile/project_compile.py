@@ -386,6 +386,10 @@ class CCPluginCompile(cocos.CCPlugin):
 
             compile_cmd = "%s -e %s" % (compile_cmd, add_para)
 
+        env_param = utils.ExtendEnv.get_extend_env_str()
+        if env_param and len(env_param) > 0:
+            compile_cmd += (' --env "%s"' % env_param)
+
         # run compile command
         self._run_cmd(compile_cmd)
 
@@ -402,6 +406,10 @@ class CCPluginCompile(cocos.CCPlugin):
         cocos_cmd_path = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), "cocos")
         rm_ext = ".js"
         compile_cmd = "\"%s\" jscompile -s \"%s\" -d \"%s\"" % (cocos_cmd_path, src_dir, dst_dir)
+
+        env_param = utils.ExtendEnv.get_extend_env_str()
+        if env_param and len(env_param) > 0:
+            compile_cmd += (' --env "%s"' % env_param)
 
         # run compile command
         self._run_cmd(compile_cmd)
@@ -639,6 +647,21 @@ class CCPluginCompile(cocos.CCPlugin):
         if not cocos.os_is_mac():
             raise cocos.CCPluginError(MultiLanguage.get_string('COMPILE_ERROR_BUILD_ON_MAC'),
                                       cocos.CCPluginError.ERROR_WRONG_ARGS)
+
+        #cocospackage
+        try:
+            if os.path.exists(os.path.join(self._project.get_project_dir(), '.cocos-package.json')):
+                path = ''
+                if getattr(sys, 'frozen', None):
+                    path = os.path.realpath(os.path.dirname(sys.executable))
+                else:
+                    path = os.path.realpath(os.path.dirname(__file__))
+                path = os.path.join(path, '../plugin_package/cocospackage')
+                cmd = '%s encrypt -p %s --mode %s --platform ios --runincocos --runinbuild --noupdate --env %s' % (path, self._project.get_project_dir(), self._mode, self. __class__.get_console_path())
+                self._run_cmd(cmd)
+        except:
+            pass
+        
 
         if self._sign_id is not None:
             cocos.Logging.info(MultiLanguage.get_string('COMPILE_INFO_IOS_SIGN_FMT', self._sign_id))

@@ -14,6 +14,7 @@ from MultiLanguage import MultiLanguage
 from cocos import CCPluginError
 from cocos import Logging
 from argparse import ArgumentParser
+from utils import ExtendEnv
 
 class LibsCompiler(cocos.CCPlugin):
     CFG_FILE = 'configs/gen_libs_config.json'
@@ -316,6 +317,7 @@ class LibsCompiler(cocos.CCPlugin):
             if self.build_ios:
                 # compile ios simulator
                 build_cmd = XCODE_CMD_FMT % (proj_path, mode_str, "%s iOS" % target, "-sdk iphonesimulator ARCHS=\"i386 x86_64\" VALID_ARCHS=\"i386 x86_64\"", ios_sim_libs_dir)
+                build_cmd += ' ONLY_ACTIVE_ARCH=NO'
                 self._run_cmd(build_cmd)
 
                 # compile ios device
@@ -361,6 +363,10 @@ class LibsCompiler(cocos.CCPlugin):
         # build the simulator project
         proj_path = os.path.join(engine_dir, 'tools/simulator')
         build_cmd = "%s compile -s %s -p android --ndk-mode %s --app-abi %s" % (cmd_path, proj_path, self.mode, self.app_abi)
+
+        env_param = ExtendEnv.get_extend_env_str()
+        if env_param and len(env_param) > 0:
+            build_cmd += (' --env "%s"' % env_param)
         self._run_cmd(build_cmd)
 
         # copy .a to prebuilt dir
@@ -376,7 +382,7 @@ class LibsCompiler(cocos.CCPlugin):
 
         if not self.disable_strip:
             # strip the android libs
-            ndk_root = os.environ["NDK_ROOT"]
+            ndk_root = cocos.check_environment_variable("NDK_ROOT")
             if cocos.os_is_win32():
                 if cocos.os_is_32bit_windows():
                     check_bits = [ "", "-x86_64" ]
