@@ -567,8 +567,8 @@ class AndroidBuilder(object):
         if self._project._is_lua_project():
             compile_obj.compile_lua_scripts(assets_dir, assets_dir)
 
-        if self._project._is_js_project():
-            compile_obj.compile_js_scripts(assets_dir, assets_dir)
+        # if self._project._is_js_project():
+        #     compile_obj.compile_js_scripts(assets_dir, assets_dir)
 
         if not no_apk:
             # gather the sign info if necessary

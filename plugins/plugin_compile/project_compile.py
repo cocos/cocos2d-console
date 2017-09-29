@@ -715,17 +715,17 @@ class CCPluginCompile(cocos.CCPlugin):
         if self._project._is_script_project():
             script_src_dir = os.path.join(self._project.get_project_dir(), "src")
 
-            if self._project._is_js_project() and self._compile_script:
-                # backup the source scripts
-                self.backup_dir(script_src_dir)
-                self.compile_js_scripts(script_src_dir, script_src_dir)
+            # if self._project._is_js_project() and self._compile_script:
+            #     # backup the source scripts
+            #     self.backup_dir(script_src_dir)
+            #     self.compile_js_scripts(script_src_dir, script_src_dir)
 
-                # js project need compile the js files in engine
-                engine_js_dir = self.get_engine_js_dir()
-                if engine_js_dir is not None:
-                    self.backup_dir(engine_js_dir)
-                    self.compile_js_scripts(engine_js_dir, engine_js_dir)
-                need_reset_dir = True
+            #     # js project need compile the js files in engine
+            #     engine_js_dir = self.get_engine_js_dir()
+            #     if engine_js_dir is not None:
+            #         self.backup_dir(engine_js_dir)
+            #         self.compile_js_scripts(engine_js_dir, engine_js_dir)
+            #     need_reset_dir = True
 
             if self._project._is_lua_project() and self._lua_encrypt:
                 # on iOS, only invoke luacompile when lua encrypt is specified
@@ -852,17 +852,17 @@ class CCPluginCompile(cocos.CCPlugin):
         if self._project._is_script_project():
             script_src_dir = os.path.join(self._project.get_project_dir(), "src")
 
-            if self._project._is_js_project() and self._compile_script:
-                # backup the source scripts
-                self.backup_dir(script_src_dir)
-                self.compile_js_scripts(script_src_dir, script_src_dir)
+            # if self._project._is_js_project() and self._compile_script:
+            #     # backup the source scripts
+            #     self.backup_dir(script_src_dir)
+            #     self.compile_js_scripts(script_src_dir, script_src_dir)
 
-                # js project need compile the js files in engine
-                engine_js_dir = self.get_engine_js_dir()
-                if engine_js_dir is not None:
-                    self.backup_dir(engine_js_dir)
-                    self.compile_js_scripts(engine_js_dir, engine_js_dir)
-                need_reset_dir = True
+            #     # js project need compile the js files in engine
+            #     engine_js_dir = self.get_engine_js_dir()
+            #     if engine_js_dir is not None:
+            #         self.backup_dir(engine_js_dir)
+            #         self.compile_js_scripts(engine_js_dir, engine_js_dir)
+            #     need_reset_dir = True
 
             if self._project._is_lua_project() and (self._lua_encrypt or self._compile_script):
                 # on iOS, only invoke luacompile when lua encrypt is specified
@@ -1157,8 +1157,8 @@ class CCPluginCompile(cocos.CCPlugin):
             cocos.copy_files_with_config(cfg, build_cfg_path, output_dir)
 
         # check the project config & compile the script files
-        if self._project._is_js_project():
-            self.compile_js_scripts(output_dir, output_dir)
+        # if self._project._is_js_project():
+        #     self.compile_js_scripts(output_dir, output_dir)
 
         if self._project._is_lua_project():
             self.compile_lua_scripts(output_dir, output_dir)
