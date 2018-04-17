@@ -183,7 +183,7 @@ class LibsCompiler(cocos.CCPlugin):
             "\"%s\"" % cmd_path,
             "\"%s\"" % sln_path,
             "/t:%s" % proj_name,
-            "/property:Configuration=%s" % mode,
+            "/property:Configuration=%s;Platform=Win32" % mode,
             "/m"
         ])
         self._run_cmd(build_cmd)
@@ -212,6 +212,7 @@ class LibsCompiler(cocos.CCPlugin):
                 Logging.warning(MultiLanguage.get_string('GEN_LIBS_WARNING_VS_NOT_FOUND_FMT', vs_version))
             else:
                 vs_cmd_info[vs_version] = vs_command
+
 
         if len(vs_cmd_info) == 0:
             raise CCPluginError(MultiLanguage.get_string('GEN_LIBS_ERROR_VS_NOT_FOUND'),
@@ -243,7 +244,7 @@ class LibsCompiler(cocos.CCPlugin):
                     clean_cmd = " ".join([
                         "\"%s\"" % vs_command,
                         "\"%s\"" % proj_path,
-                        "/t:Clean /p:Configuration=%s" % mode_str
+                        "/t:Clean /p:Configuration=%s;Platform=Win32" % mode_str
                     ])
                     self._run_cmd(clean_cmd)
 

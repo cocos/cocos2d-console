@@ -42,24 +42,45 @@ def get_msbuild_path(vs_version):
 
     # Find VS path
     msbuild_path = None
-    for reg_flag in reg_flag_list:
-        try:
-            vs = _winreg.OpenKey(
-                _winreg.HKEY_LOCAL_MACHINE,
-                r"SOFTWARE\Microsoft\MSBuild\ToolsVersions\%s" % vs_ver,
-                0,
-                _winreg.KEY_READ | reg_flag
-            )
-            msbuild_path, type = _winreg.QueryValueEx(vs, 'MSBuildToolsPath')
-        except:
-            continue
+    if vs_ver == '15.0':
+        # Find VS2017 Path Ref:https://stackoverflow.com/questions/328017/path-to-msbuild
+        for reg_flag in reg_flag_list:
+            try:
+                vs = _winreg.OpenKey(
+                    _winreg.HKEY_LOCAL_MACHINE,
+                    r"SOFTWARE\WOW6432Node\Microsoft\VisualStudio\SxS\VS7",
+                    0,
+                    _winreg.KEY_READ | reg_flag
+                )
+                msbuild_path, type = _winreg.QueryValueEx(vs, '15.0')
+            except:
+                continue
 
-        if msbuild_path is not None:
-            msbuild_path = os.path.join(msbuild_path, "MSBuild.exe")
-            if os.path.exists(msbuild_path):
-                break
-            else:
-                msbuild_path = None
+            if msbuild_path is not None:
+                msbuild_path = os.path.join(msbuild_path, "MSBuild\\15.0\\bin\\amd64\\MSBuild.exe")
+                if os.path.exists(msbuild_path):
+                    break
+                else:
+                    msbuild_path = None
+    else:
+        for reg_flag in reg_flag_list:
+            try:
+                vs = _winreg.OpenKey(
+                    _winreg.HKEY_LOCAL_MACHINE,
+                    r"SOFTWARE\Microsoft\MSBuild\ToolsVersions\%s" % vs_ver,
+                    0,
+                    _winreg.KEY_READ | reg_flag
+                )
+                msbuild_path, type = _winreg.QueryValueEx(vs, 'MSBuildToolsPath')
+            except:
+                continue
+
+            if msbuild_path is not None:
+                msbuild_path = os.path.join(msbuild_path, "MSBuild.exe")
+                if os.path.exists(msbuild_path):
+                    break
+                else:
+                    msbuild_path = None
 
     return msbuild_path
 

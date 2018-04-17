@@ -36,5 +36,5 @@
         "cocos/editor-support/creator/Android.mk",
         "tools/simulator/libsimulator/proj.android/Android.mk"
     ],
-    "support_vs_versions" : [ 2015, 2013 ]
+    "support_vs_versions" : [ 2017, 2015, 2013 ]
 }
