@@ -197,7 +197,10 @@ class CCPluginDeploy(cocos.CCPlugin):
 
         if self._instant_game:
             ia_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'extras', 'google', 'instantapps', 'tools', 'ia.jar'))
-            adb_install = "java -jar %s run -u %s %s" % (ia_path, self._launch_url, apk_path)
+            if self._launch_url:
+                adb_install = "java -jar %s run -u %s %s" % (ia_path, self._launch_url, apk_path)
+            else:
+                adb_install = "java -jar %s run %s" % (ia_path, apk_path)
         else:
             adb_path = cocos.CMDRunner.convert_path_to_cmd(os.path.join(sdk_root, 'platform-tools', 'adb'))
             # do uninstall only when that app is installed
