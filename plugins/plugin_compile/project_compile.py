@@ -853,10 +853,10 @@ class CCPluginCompile(cocos.CCPlugin):
 
     # Get the required VS versions from the engine version of project
     def get_required_vs_versions(self):
-        return [ 2013, 2015, 2017 ]
+        return [  2017 ]
 
     def get_min_vs_version(self):
-        return 2013
+        return 2017
 
     def get_available_devenv(self, required_versions, min_ver, specify_vs_ver=None):
         if required_versions is None or len(required_versions) == 0:
