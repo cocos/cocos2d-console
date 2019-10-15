@@ -22,7 +22,7 @@ def get_msbuild_path(vs_version):
         return None
 
     if isinstance(vs_version, int):
-        # The value of vs_version is int. such as : 2013, 2015
+        # The value of vs_version is int. such as : 2017
         if vs_version in VS_VERSION_MAP.keys():
             vs_ver = VS_VERSION_MAP[vs_version]
         else:
@@ -71,7 +71,7 @@ def get_devenv_path(vs_version):
         return None
 
     if isinstance(vs_version, int):
-        # The value of vs_version is int. such as : 2013, 2015
+        # The value of vs_version is int. such as : 2017
         if vs_version in VS_VERSION_MAP.keys():
             vs_ver = VS_VERSION_MAP[vs_version]
         else:
@@ -172,7 +172,7 @@ def get_newest_msbuild(min_ver=None):
         # value of min_ver is string. such as : "12.0", "14.0"
         min_ver_float = float(min_ver)
     elif isinstance(min_ver, int) and min_ver in VS_VERSION_MAP.keys():
-        # value of min_ver is int. such as : 2013, 2015
+        # value of min_ver is int. such as : 2017
         min_ver_float = float(VS_VERSION_MAP[min_ver])
 
     find_ver = None
@@ -198,7 +198,7 @@ def get_newest_devenv(min_ver=None):
         # value of min_ver is string. such as : "12.0", "14.0"
         min_ver_float = float(min_ver)
     elif isinstance(min_ver, int) and min_ver in VS_VERSION_MAP.keys():
-        # value of min_ver is int. such as : 2013, 2015
+        # value of min_ver is int. such as : 2017
         min_ver_float = float(VS_VERSION_MAP[min_ver])
 
     find_ver = None
