@@ -155,6 +155,10 @@ class MultiLanguage(object):
             ret= key
 
         if isinstance(ret, unicode):
-            ret = ret.encode(self.encoding)
+            try:
+                ret = ret.encode(self.encoding)
+            except UnicodeEncodeError:
+                print("MultiLanguage encode '%s' to encoding '%s' error!" %(ret, self.encoding))
+                ret = key
 
         return ret
