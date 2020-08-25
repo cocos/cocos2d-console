@@ -167,13 +167,13 @@ class SimulatorCompiler(cocos.CCPlugin):
 
     def get_keywords(self):
         osx_keyword = {
-            "CC_TARGET_OS_IPHONE,":"CC_TARGET_OS_IPHONE,\n\"COCOS2D_DEBUG=1\",",
-            "CC_TARGET_OS_MAC,":"CC_TARGET_OS_MAC,\n\"COCOS2D_DEBUG=1\",",
-            "COCOS2D_DEBUG=0":"COCOS2D_DEBUG=1",
+            "CC_TARGET_OS_IPHONE,":"CC_TARGET_OS_IPHONE,\n\"CC_DEBUG=1\",",
+            "CC_TARGET_OS_MAC,":"CC_TARGET_OS_MAC,\n\"CC_DEBUG=1\",",
+            "CC_DEBUG=0":"CC_DEBUG=1",
         }
 
         win_keyword = {
-            "_WINDOWS":"_WINDOWS;COCOS2D_DEBUG=1",
+            "_WINDOWS":"_WINDOWS;CC_DEBUG=1",
         }
 
         if cocos.os_is_mac():
@@ -358,7 +358,7 @@ class SimulatorCompiler(cocos.CCPlugin):
         if self.build_android:
             self.compile_for_android()
 
-    def change_cocos2d_debug_macro_to_1(self, file_list):
+    def change_CC_DEBUG_macro_to_1(self, file_list):
         keyword = self.get_keywords()
         for file_path in file_list:
             self.replace_keyword_with_file(file_path, keyword)
@@ -438,7 +438,7 @@ class SimulatorCompiler(cocos.CCPlugin):
             self.update_bundle_version()
 
             # modify project config files
-            self.change_cocos2d_debug_macro_to_1(modify_files)
+            self.change_CC_DEBUG_macro_to_1(modify_files)
 
             # compile simulator
             self.do_compile()
