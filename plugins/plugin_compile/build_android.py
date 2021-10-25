@@ -255,13 +255,13 @@ class AndroidBuilder(object):
                 static_file_path = os.path.join(ndk_work_dir, "obj", "local", abi_dir)
                 if os.path.isdir(static_file_path):
                     self.remove_c_libs(static_file_path)
-           	    
+
         # windows should use ";" to seperate module paths
         if cocos.os_is_win32():
             ndk_module_path = ';'.join(module_paths)
         else:
             ndk_module_path = ':'.join(module_paths)
-        
+
         ndk_module_path= 'NDK_MODULE_PATH=' + ndk_module_path
 
         if ndk_build_param is None:
@@ -445,11 +445,7 @@ class AndroidBuilder(object):
             # copy the apk to output dir
             if output_dir:
                 apk_name = '%s-%s' % (project_name, build_mode)
-                if instant_game:
-                    # google instant game pack all the .apk into a .zip
-                    apk_name += '.zip'
-                else:
-                    apk_name += '.apk'
+                apk_name += '.apk'
                 gen_apk_path = os.path.join(gen_apk_folder, apk_name)
 
                 # Android Studio 2.x.x uses 'app/build/outputs/apk' as output directory,
@@ -464,10 +460,7 @@ class AndroidBuilder(object):
 
                 if build_mode == "release":
                     signed_name = "%s-%s-signed" % (project_name, build_mode)
-                    if instant_game:
-                        signed_name += '.zip'
-                    else:
-                        signed_name += '.apk'
+                    signed_name += '.apk'
                     apk_path = os.path.join(output_dir, signed_name)
                     if os.path.exists(apk_path):
                         os.remove(apk_path)
