@@ -445,11 +445,7 @@ class AndroidBuilder(object):
             # copy the apk to output dir
             if output_dir:
                 apk_name = '%s-%s' % (project_name, build_mode)
-                if instant_game:
-                    # google instant game pack all the .apk into a .zip
-                    apk_name += '.apk'
-                else:
-                    apk_name += '.apk'
+                apk_name += '.apk'
                 gen_apk_path = os.path.join(gen_apk_folder, apk_name)
 
                 # Android Studio 2.x.x uses 'app/build/outputs/apk' as output directory,
@@ -464,10 +460,7 @@ class AndroidBuilder(object):
 
                 if build_mode == "release":
                     signed_name = "%s-%s-signed" % (project_name, build_mode)
-                    if instant_game:
-                        signed_name += '.apk'
-                    else:
-                        signed_name += '.apk'
+                    signed_name += '.apk'
                     apk_path = os.path.join(output_dir, signed_name)
                     if os.path.exists(apk_path):
                         os.remove(apk_path)
