@@ -95,19 +95,40 @@ class CCPluginRun(cocos.CCPlugin):
         return (errCode, out)
 
     def _get_simulator_id(self):
-        (errCode, out) = self._get_cmd_output([ "xcrun", "instruments", "-s" ])
+        # check version, xcode version > 9 should use xcrun xtrace
+        xcode_version = cocos.get_xcode_version()
+        xcode9_and_upper = cocos.version_compare(xcode_version,">=",9)
+        # get name and id with different commands
         names = []
-        if errCode == 0:
-            pattern = r'(^iPhone[^\[]+)\[(.*)\]\s*\(Simulator\)'
-            lines = out.split('\n')
-            for line in lines:
-                match = re.match(pattern, line)
-                if match:
-                    info = {
-                        "name" : match.group(1),
-                        'id' : match.group(2)
-                    }
-                    names.append(info)
+        if xcode9_and_upper:
+            (errCode, out) = self._get_cmd_output(["xcrun", "xctrace", "list", "devices"])
+            if errCode == 0:
+                pattern = r'(^iPhone.*Simulator)'
+                paramPattern = r'(\((.*?)\))'
+                lines = out.split('\n')
+                for line in lines:
+                    match = re.match(pattern, line) # match example: iPhone 11 Simulator
+                    if match:
+                        #params pattern : ('(15.0)', '15.0'), ('(78FC6777-05B3-4FCA-B178-D3A3D5D49E07)', '78FC6777-05B3-4FCA-B178-D3A3D5D49E07')
+                        params = re.findall(paramPattern, line) 
+                        info = {
+                            "name" : match.group(1).replace('Simulator','')+params[0][0], # name example : iPhone 11 (15.0)
+                            'id' : params[1][1] # id example: 78FC6777-05B3-4FCA-B178-D3A3D5D49E07
+                        }
+                        names.append(info)
+        else:
+            (errCode, out) = self._get_cmd_output([ "xcrun", "instruments", "-s" ])
+            if errCode == 0:
+                pattern = r'(^iPhone[^\[]+)\[(.*)\]\s*\(Simulator\)'
+                lines = out.split('\n')
+                for line in lines:
+                    match = re.match(pattern, line)
+                    if match:
+                        info = {
+                            "name" : match.group(1),
+                            'id' : match.group(2)
+                        }
+                        names.append(info)
 
         ret = None
         retName = None
