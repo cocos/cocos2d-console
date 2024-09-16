@@ -1685,7 +1685,7 @@ class XcodeProject(PBXDict):
         if not backup_name:
             backup_name = "%s.%s.backup" % (file_name, datetime.datetime.now().strftime('%d%m%y-%H%M%S'))
 
-        shutil.copy2(file_name, backup_name)
+        shutil.copy(file_name, backup_name)
 
     def save(self, file_name=None, old_format=False):
         if old_format :

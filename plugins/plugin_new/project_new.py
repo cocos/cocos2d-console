@@ -525,7 +525,7 @@ class TPCreator(object):
                 else:
                     if os.path.exists(dstfile):
                         os.remove(dstfile)
-                    shutil.copy2(srcfile, dstfile)
+                    shutil.copy(srcfile, dstfile)
 
     def append_x_engine(self, v):
         # FIXME this is a hack, but in order to fix it correctly the cocos-project-template.json
@@ -578,7 +578,7 @@ class TPCreator(object):
                 else:
                     if os.path.exists(dstfile):
                         os.remove(dstfile)
-                    shutil.copy2(srcfile, dstfile)
+                    shutil.copy(srcfile, dstfile)
 
     def append_from_template(self, v):
         cocos.Logging.info(MultiLanguage.get_string('NEW_INFO_STEP_APPEND_TEMPLATE'))
@@ -599,7 +599,7 @@ class TPCreator(object):
             src = cocos.add_path_prefix(src)
             dst = cocos.add_path_prefix(dst)
 
-            shutil.copy2(src, dst)
+            shutil.copy(src, dst)
 
 # project cmd
     def project_rename(self, v):
